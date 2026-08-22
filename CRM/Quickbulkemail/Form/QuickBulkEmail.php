@@ -285,9 +285,7 @@ class CRM_Quickbulkemail_Form_QuickBulkEmail extends CRM_Core_Form {
     // Start
     $this->addElement('checkbox', 'override_verp', ts('Track Replies?'));
 
-    $defaults['override_verp'] = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
-      'track_civimail_replies', NULL, FALSE
-    );
+    $defaults['override_verp'] = Civi::settings()->get('track_civimail_replies') ?: FALSE;
     
     $this->add('checkbox', 'url_tracking', ts('Track Click-throughs?'));
     $defaults['url_tracking'] = TRUE;
