@@ -26,14 +26,14 @@ function quickbulkemail_civicrm_install() {
   $extenDr          = $config->extensionsDir;
   $messageHtmlFile  = $extenDr . DIRECTORY_SEPARATOR .'uk.co.vedaconsulting.quickbulkemail'. DIRECTORY_SEPARATOR.'sample_inline_editing.html';
   $messageHtml      = file_get_contents($messageHtmlFile);
-  $message_params = array(
+  $message_params = [
     'sequential'  => 1,
     'version'     => 3,
     'msg_title'   => "Sample Inline Editing Template",
     'msg_subject' => "Sample Inline Editing",
     'is_default'  => 1,
     'msg_html'    => $messageHtml,
-  );
+  ];
 
   $result = civicrm_api3('MessageTemplate', 'create', $message_params);
   return _quickbulkemail_civix_civicrm_install();
@@ -43,9 +43,9 @@ function quickbulkemail_civicrm_install() {
  * Implementation of hook_civicrm_uninstall
  */
 function quickbulkemail_civicrm_uninstall() {
-  $result = civicrm_api3('MessageTemplate', 'get', array( 'sequential' => 1, 'version'=> 3, 'msg_title' => "Sample Inline Editing Template",));
+  $result = civicrm_api3('MessageTemplate', 'get', [ 'sequential' => 1, 'version'=> 3, 'msg_title' => "Sample Inline Editing Template",]);
     if($result['is_error'] == 0) {
-      $deleteResult = civicrm_api3('MessageTemplate', 'delete', array('version' => 3, 'sequential' => 1, 'id' => $result['id'],));
+      $deleteResult = civicrm_api3('MessageTemplate', 'delete', ['version' => 3, 'sequential' => 1, 'id' => $result['id'],]);
     }
   return _quickbulkemail_civix_civicrm_uninstall();
 }

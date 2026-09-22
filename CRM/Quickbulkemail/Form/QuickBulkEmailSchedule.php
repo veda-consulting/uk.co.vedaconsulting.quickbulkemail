@@ -44,27 +44,27 @@ class CRM_Quickbulkemail_Form_QuickBulkEmailSchedule extends CRM_Core_Form {
     $this->add('select',
       'test_group',
       ts('Send to This Group'),
-      array('' => ts('- none -')) + CRM_Core_PseudoConstant::group('Mailing')
+      ['' => ts('- none -')] + CRM_Core_PseudoConstant::group('Mailing')
     );
     $this->add('submit', 'sendtest', ts('Send a Test Mailing'));
-    $this->addFormRule(array('CRM_Quickbulkemail_Form_QuickBulkEmailSchedule', 'testMail'), $this);
+    $this->addFormRule(['CRM_Quickbulkemail_Form_QuickBulkEmailSchedule', 'testMail'], $this);
     // End
     
     // Schedule or send
     // Start
-    $this->addDateTime('start_date', ts('Schedule Mailing'), FALSE, array('formatType' => 'mailing'));
+    $this->addDateTime('start_date', ts('Schedule Mailing'), FALSE, ['formatType' => 'mailing']);
     $this->addElement('checkbox', 'now', ts('Send Immediately'));
     // End
     
     //$this->addFormRule(array('CRM_Quickbulkemail_Form_QuickBulkEmailSchedule', 'formRule'), $this);
     
-    $this->addButtons(array(
-      array(
+    $this->addButtons([
+      [
         'type' => 'submit',
         'name' => ts('Submit'),
         'isDefault' => TRUE,
-      ),
-    ));
+      ],
+    ]);
 
     // export form elements
     // $this->assign('elementNames', $this->getRenderableElementNames());
@@ -104,7 +104,7 @@ class CRM_Quickbulkemail_Form_QuickBulkEmailSchedule extends CRM_Core_Form {
         }
 
         $draftURL = CRM_Utils_System::url('civicrm/mailing/browse/unscheduled', 'scheduled=false&reset=1');
-        $status = ts("Your mailing has been saved. You can continue later by clicking the 'Continue' action to resume working on it.<br /> From <a href='%1'>Draft and Unscheduled Mailings</a>.", array(1 => $draftURL));
+        $status = ts("Your mailing has been saved. You can continue later by clicking the 'Continue' action to resume working on it.<br /> From <a href='%1'>Draft and Unscheduled Mailings</a>.", [1 => $draftURL]);
         CRM_Core_Session::setStatus($status);
 
         //replace user context to search.
@@ -136,10 +136,10 @@ class CRM_Quickbulkemail_Form_QuickBulkEmailSchedule extends CRM_Core_Form {
       if (CRM_Utils_Date::format(CRM_Utils_Date::processDate($params['start_date'],
             $params['start_date_time']
           )) < CRM_Utils_Date::format(date('YmdHi00'))) {
-        return array(
+        return [
           'start_date' =>
           ts('Start date cannot be earlier than the current time.'),
-        );
+        ];
       }
       $error = TRUE;
     }
@@ -168,10 +168,10 @@ class CRM_Quickbulkemail_Form_QuickBulkEmailSchedule extends CRM_Core_Form {
       if (CRM_Utils_Date::format(CRM_Utils_Date::processDate($testParams['start_date'],
             $testParams['start_date_time']
           )) < CRM_Utils_Date::format(date('YmdHi00'))) {
-        $errorArray = array(
+        $errorArray = [
           'start_date' =>
           ts('Start date cannot be earlier than the current time.'),
-        );
+        ];
         
         return $errorArray; 
       }
@@ -231,7 +231,7 @@ class CRM_Quickbulkemail_Form_QuickBulkEmailSchedule extends CRM_Core_Form {
         //redirect it to search result CRM-3711.
         if ($ssID && $self->_searchBasedMailing) {
           $draftURL = CRM_Utils_System::url('civicrm/mailing/browse/unscheduled', 'scheduled=false&reset=1');
-          $status = ts("You can continue later by clicking the 'Continue' action to resume working on it.<br />From <a href='%1'>Draft and Unscheduled Mailings</a>.", array(1 => $draftURL));
+          $status = ts("You can continue later by clicking the 'Continue' action to resume working on it.<br />From <a href='%1'>Draft and Unscheduled Mailings</a>.", [1 => $draftURL]);
 
           //replace user context to search.
           $context = $self->get('context');
@@ -260,10 +260,10 @@ class CRM_Quickbulkemail_Form_QuickBulkEmailSchedule extends CRM_Core_Form {
 
       if (CRM_Utils_Array::value('_qf_Test_next', $testParams) &&
         $self->get('count') <= 0) {
-        return array(
+        return [
           '_qf_default' =>
           ts("You can not schedule or send this mailing because there are currently no recipients selected. Click 'Previous' to return to the Select Recipients step, OR click 'Save & Continue Later'."),
-        );
+        ];
       }
 
       if (CRM_Utils_Array::value('_qf_Import_refresh', $_POST) ||
@@ -295,13 +295,13 @@ ORDER BY   e.is_bulkmail DESC, e.is_primary DESC
 ";
 
         $dao = CRM_Core_DAO::executeQuery($query);
-        $emailDetail = array();
+        $emailDetail = [];
         // fetch contact_id and email id for all existing emails
         while ($dao->fetch()) {
-          $emailDetail[$dao->email] = array(
+          $emailDetail[$dao->email] = [
             'contact_id' => $dao->contact_id,
             'email_id' => $dao->id,
-          );
+          ];
         }
 
         $dao->free();
@@ -315,24 +315,24 @@ ORDER BY   e.is_bulkmail DESC, e.is_primary DESC
 
           if (!$contactId) {
             //create new contact.
-            $params = array(
+            $params = [
               'contact_type' => 'Individual',
-              'email' => array(
-                1 => array('email' => $email,
+              'email' => [
+                1 => ['email' => $email,
                   'is_primary' => 1,
                   'location_type_id' => 1,
-                )),
-            );
+                ]],
+            ];
             $contact   = CRM_Contact_BAO_Contact::create($params);
             $emailId   = $contact->email[0]->id;
             $contactId = $contact->id;
             $contact->free();
           }
-          $params = array(
+          $params = [
             'job_id' => $job->id,
             'email_id' => $emailId,
             'contact_id' => $contactId,
-          );
+          ];
           CRM_Mailing_Event_BAO_Queue::create($params);
         }
       }
@@ -372,7 +372,7 @@ ORDER BY   e.is_bulkmail DESC, e.is_primary DESC
   }
   
   function postProcess() {
-    $params = array();
+    $params = [];
 
     $params['mailing_id'] = $ids['mailing_id'] = $this->_mailingID;
 
@@ -380,8 +380,8 @@ ORDER BY   e.is_bulkmail DESC, e.is_primary DESC
       CRM_Core_Error::fatal(ts('Could not find a mailing id'));
     }
 
-    foreach (array(
-      'now', 'start_date', 'start_date_time') as $parameter) {
+    foreach ([
+      'now', 'start_date', 'start_date_time'] as $parameter) {
       $params[$parameter] = $this->controller->exportValue($this->_name,
         $parameter
       );

@@ -31,7 +31,7 @@ class CRM_Quickbulkemail_Form_QuickBulkEmail extends CRM_Core_Form {
     // to continue the unscheduled or draft mailing
     $continue = $this->_continue = CRM_Utils_Request::retrieve('continue', 'String', $this, FALSE, NULL);
     $mailingID = CRM_Utils_Request::retrieve('mid', 'Integer', $this, FALSE, NULL);
-    $defaults = array();
+    $defaults = [];
     if ($this->_mailingID) {
       // check that the user has permission to access mailing id
       CRM_Mailing_BAO_Mailing::checkPermission($this->_mailingID);
@@ -43,7 +43,7 @@ class CRM_Quickbulkemail_Form_QuickBulkEmail extends CRM_Core_Form {
 
       $defaults['name'] = $mailing->name;
       if (!$continue) {
-        $defaults['name'] = ts('Copy of %1', array(1 => $mailing->name));
+        $defaults['name'] = ts('Copy of %1', [1 => $mailing->name]);
       }
       else {
         // CRM-7590, reuse same mailing ID if we are continuing
@@ -55,10 +55,10 @@ class CRM_Quickbulkemail_Form_QuickBulkEmail extends CRM_Core_Form {
 
       $dao = new CRM_Mailing_DAO_MailingGroup();
 
-      $mailingGroups = array(
-        'civicrm_group' => array( ),
-        'civicrm_mailing' => array( )
-      );
+      $mailingGroups = [
+        'civicrm_group' => [ ],
+        'civicrm_mailing' => [ ]
+      ];
       $dao->mailing_id = $this->_mailingID;
       $dao->find();
       while ($dao->fetch()) {
@@ -216,7 +216,7 @@ class CRM_Quickbulkemail_Form_QuickBulkEmail extends CRM_Core_Form {
       $htmlMessage = $this->get('html_message');
     }
 
-    $htmlMessage = str_replace(array("\n", "\r"), ' ', $htmlMessage);
+    $htmlMessage = str_replace(["\n", "\r"], ' ', $htmlMessage);
     $htmlMessage = str_replace("'", "\'", $htmlMessage);
     $this->assign('message_html', $htmlMessage);
 
@@ -230,10 +230,10 @@ class CRM_Quickbulkemail_Form_QuickBulkEmail extends CRM_Core_Form {
 
     //CRM-4678 setdefault to default component when composing new mailing.
     if (!$reuseMailing) {
-      $componentFields = array(
+      $componentFields = [
         'header_id' => 'Header',
         'footer_id' => 'Footer',
-      );
+      ];
       foreach ($componentFields as $componentVar => $componentType) {
         $defaults[$componentVar] = CRM_Mailing_PseudoConstant::defaultComponent($componentType, '');
       }
@@ -261,7 +261,7 @@ class CRM_Quickbulkemail_Form_QuickBulkEmail extends CRM_Core_Form {
       'select', // field type
       'includeGroups', // field name
       'Select Group', // field label
-      array('' => '- select -') + $groups, // list of options
+      ['' => '- select -'] + $groups, // list of options
       true // is required
     );
 	
@@ -309,7 +309,7 @@ class CRM_Quickbulkemail_Form_QuickBulkEmail extends CRM_Core_Form {
     
     // From email address and reply to options
     // Start
-    $options = array();
+    $options = [];
     // this seems so hacky, not sure what we are doing here and why. Need to investigate and fix
     $session->getVars($options,
       "CRM_Mailing_Controller_Send_{$this->controller->_key}"
@@ -319,7 +319,7 @@ class CRM_Quickbulkemail_Form_QuickBulkEmail extends CRM_Core_Form {
     if (empty($fromEmailAddress)) {
       //redirect user to enter from email address.
       $url = CRM_Utils_System::url('civicrm/admin/options/from_email_address', 'group=from_email_address&action=add&reset=1');
-      $status = ts("There is no valid from email address present. You can add here <a href='%1'>Add From Email Address.</a>", array(1 => $url));
+      $status = ts("There is no valid from email address present. You can add here <a href='%1'>Add From Email Address.</a>", [1 => $url]);
       $session->setStatus($status);
     }
     else {
@@ -330,8 +330,8 @@ class CRM_Quickbulkemail_Form_QuickBulkEmail extends CRM_Core_Form {
     
     
     $this->add('select', 'from_email_address',
-      ts('From Email Address'), array(
-        '' => '- select -') + $fromEmailAddress, TRUE
+      ts('From Email Address'), [
+        '' => '- select -'] + $fromEmailAddress, TRUE
     );
     
     //echo "<pre>";print_r ($config);echo "</pre>";
@@ -339,7 +339,7 @@ class CRM_Quickbulkemail_Form_QuickBulkEmail extends CRM_Core_Form {
     if (isset($config->replyTo) && !empty($config->replyTo) &&
       ! CRM_Utils_Array::value( 'override_verp', $options ) ) {
       $this->add('select', 'reply_to_address', ts('Reply-To'),
-        array('' => '- select -') + $fromEmailAddress
+        ['' => '- select -'] + $fromEmailAddress
       );
     }
     elseif (CRM_Utils_Array::value('override_verp', $options)) {
@@ -350,10 +350,10 @@ class CRM_Quickbulkemail_Form_QuickBulkEmail extends CRM_Core_Form {
     // Mailing Header and footer
     // Start
     $this->add('select', 'header_id', ts('Mailing Header'),
-      array('' => ts('- none -')) + CRM_Mailing_PseudoConstant::component('Header')
+      ['' => ts('- none -')] + CRM_Mailing_PseudoConstant::component('Header')
     );
     $this->add('select', 'footer_id', ts('Mailing Footer'),
-      array('' => ts('- none -')) + CRM_Mailing_PseudoConstant::component('Footer')
+      ['' => ts('- none -')] + CRM_Mailing_PseudoConstant::component('Footer')
     );
     // End
     
@@ -368,48 +368,48 @@ class CRM_Quickbulkemail_Form_QuickBulkEmail extends CRM_Core_Form {
     $outG = &$this->addElement('advmultiselect', 'excludeGroups',
       ts('Exclude Group(s)') . ' ',
       $groups,
-      array(
+      [
         'size' => 5,
         'style' => 'width:240px',
         'class' => 'advmultiselect',
-      )
+      ]
     );
-    $outG->setButtonAttributes('add', array('value' => ts('Add >>')));
-    $outG->setButtonAttributes('remove', array('value' => ts('<< Remove')));
+    $outG->setButtonAttributes('add', ['value' => ts('Add >>')]);
+    $outG->setButtonAttributes('remove', ['value' => ts('<< Remove')]);
     
     $mailings = CRM_Mailing_PseudoConstant::completed();
     if (!$mailings) {
-      $mailings = array();
+      $mailings = [];
     }
     
     $inM = &$this->addElement('advmultiselect', 'includeMailings',
       ts('INCLUDE Recipients of These Mailing(s)') . ' ',
       $mailings,
-      array(
+      [
         'size' => 5,
         'style' => 'width:240px',
         'class' => 'advmultiselect',
-      )
+      ]
     );
     $outM = &$this->addElement('advmultiselect', 'excludeMailings',
       ts('EXCLUDE Recipients of These Mailing(s)') . ' ',
       $mailings,
-      array(
+      [
         'size' => 5,
         'style' => 'width:240px',
         'class' => 'advmultiselect',
-      )
+      ]
     );
 
-    $inM->setButtonAttributes('add', array('value' => ts('Add >>')));
-    $outM->setButtonAttributes('add', array('value' => ts('Add >>')));
-    $inM->setButtonAttributes('remove', array('value' => ts('<< Remove')));
-    $outM->setButtonAttributes('remove', array('value' => ts('<< Remove')));
+    $inM->setButtonAttributes('add', ['value' => ts('Add >>')]);
+    $outM->setButtonAttributes('add', ['value' => ts('Add >>')]);
+    $inM->setButtonAttributes('remove', ['value' => ts('<< Remove')]);
+    $outM->setButtonAttributes('remove', ['value' => ts('<< Remove')]);
     
     $this->assign('mailingCount', count($mailings));
     // End
     
-    $this->addFormRule(array('CRM_Quickbulkemail_Form_QuickBulkEmail', 'formRule'));
+    $this->addFormRule(['CRM_Quickbulkemail_Form_QuickBulkEmail', 'formRule']);
     
     // Schedule or send
     // Start
@@ -417,17 +417,17 @@ class CRM_Quickbulkemail_Form_QuickBulkEmail extends CRM_Core_Form {
     //$this->addElement('checkbox', 'now', ts('Send Immediately'));
     // End
     
-    $buttons = array(
-      array('type' => 'next',
+    $buttons = [
+      ['type' => 'next',
         'name' => ts('Schedule & Send >>'),
         'spacing' => '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;',
         'isDefault' => TRUE,
-      ),
-      array(
+      ],
+      [
         'type' => 'submit',
         'name' => ts('Save & Continue Later'),
-      ),
-    );
+      ],
+    ];
     $this->addButtons($buttons);
 
     // export form elements
@@ -446,7 +446,7 @@ class CRM_Quickbulkemail_Form_QuickBulkEmail extends CRM_Core_Form {
    */
   static
   function formRule($fields) {
-    $errors = array();
+    $errors = [];
     
     // Validate include/exclude groups, mailings
     // Start
@@ -454,7 +454,7 @@ class CRM_Quickbulkemail_Form_QuickBulkEmail extends CRM_Core_Form {
       isset($fields['excludeGroups']) &&
       is_array($fields['excludeGroups'])
     ) {
-      $checkGroups = array();
+      $checkGroups = [];
       $checkGroups = in_array($fields['includeGroups'], $fields['excludeGroups']);
       if (!empty($checkGroups)) {
         $errors['excludeGroups'] = ts('Cannot have same groups in Include Group(s) and Exclude Group(s).');
@@ -466,7 +466,7 @@ class CRM_Quickbulkemail_Form_QuickBulkEmail extends CRM_Core_Form {
       isset($fields['excludeMailings']) &&
       is_array($fields['excludeMailings'])
     ) {
-      $checkMailings = array();
+      $checkMailings = [];
       $checkMailings = array_intersect($fields['includeMailings'], $fields['excludeMailings']);
       if (!empty($checkMailings)) {
         $errors['excludeMailings'] = ts('Cannot have same mail in Include mailing(s) and Exclude mailing(s).');
@@ -489,12 +489,12 @@ class CRM_Quickbulkemail_Form_QuickBulkEmail extends CRM_Core_Form {
     // Validate message template html/text
     // Start
     
-    $errors = array();
+    $errors = [];
     $template = CRM_Core_Smarty::singleton();
 
 
     if (isset($fields['html_message'])) {
-      $htmlMessage = str_replace(array("\n", "\r"), ' ', $fields['html_message']);
+      $htmlMessage = str_replace(["\n", "\r"], ' ', $fields['html_message']);
       $htmlMessage = str_replace("'", "\'", $htmlMessage);
       $template->assign('htmlContent', $htmlMessage);
     }
@@ -502,30 +502,30 @@ class CRM_Quickbulkemail_Form_QuickBulkEmail extends CRM_Core_Form {
     $domain = CRM_Core_BAO_Domain::getDomain();
 
     $session = CRM_Core_Session::singleton();
-    $values = array('contact_id' => $session->get('userID'),
+    $values = ['contact_id' => $session->get('userID'),
       'version' => 3,
-    );
+    ];
     require_once 'api/api.php';
     $contact = civicrm_api('contact', 'get', $values);
 
     //CRM-4524
     $contact = reset($contact['values']);
 
-    $verp = array_flip(array('optOut', 'reply', 'unsubscribe', 'resubscribe', 'owner'));
+    $verp = array_flip(['optOut', 'reply', 'unsubscribe', 'resubscribe', 'owner']);
     foreach ($verp as $key => $value) {
       $verp[$key]++;
     }
 
-    $urls = array_flip(array('forward', 'optOutUrl', 'unsubscribeUrl', 'resubscribeUrl'));
+    $urls = array_flip(['forward', 'optOutUrl', 'unsubscribeUrl', 'resubscribeUrl']);
     foreach ($urls as $key => $value) {
       $urls[$key]++;
     }
 
 
     // set $header and $footer
-    foreach (array(
-      'header', 'footer') as $part) {
-      $$part = array();
+    foreach ([
+      'header', 'footer'] as $part) {
+      $$part = [];
       if ($fields["{$part}_id"]) {
         //echo "found<p>";
         $component = new CRM_Mailing_BAO_Component();
@@ -544,8 +544,8 @@ class CRM_Quickbulkemail_Form_QuickBulkEmail extends CRM_Core_Form {
         $errors['html_message'] = ts('Please provide either a Text or HTML formatted message - or both.');
     }
     
-    foreach (array(
-      'text', 'html') as $file) {
+    foreach ([
+      'text', 'html'] as $file) {
 
 
       $str  = $fields[$file . '_message'];
@@ -557,7 +557,7 @@ class CRM_Quickbulkemail_Form_QuickBulkEmail extends CRM_Core_Form {
 
       $str = $header[$file . 'File'] . $str . $footer[$file . 'File'];
 
-      $dataErrors = array();
+      $dataErrors = [];
       
       /* First look for missing tokens */
 
@@ -565,7 +565,7 @@ class CRM_Quickbulkemail_Form_QuickBulkEmail extends CRM_Core_Form {
       if ($err !== TRUE) {
         foreach ($err as $token => $desc) {
           $dataErrors[] = '<li>' . ts('This message is missing a required token - {%1}: %2',
-            array(1 => $token, 2 => $desc)
+            [1 => $token, 2 => $desc]
           ) . '</li>';
         }
       }
@@ -601,8 +601,8 @@ class CRM_Quickbulkemail_Form_QuickBulkEmail extends CRM_Core_Form {
         }
       }
       if (!empty($dataErrors)) {
-        $errors[$file . '_message'] = ts('The following errors were detected in %1:', array(
-          1 => $name)) . ' <ul>' . implode('', $dataErrors) . '</ul><br /><a href="' . CRM_Utils_System::docURL2('Sample CiviMail Messages', TRUE, NULL, NULL, NULL, "wiki") . '" target="_blank">' . ts('More information on required tokens...') . '</a>';
+        $errors[$file . '_message'] = ts('The following errors were detected in %1:', [
+          1 => $name]) . ' <ul>' . implode('', $dataErrors) . '</ul><br /><a href="' . CRM_Utils_System::docURL2('Sample CiviMail Messages', TRUE, NULL, NULL, NULL, "wiki") . '" target="_blank">' . ts('More information on required tokens...') . '</a>';
       }
     }
     
@@ -653,10 +653,10 @@ class CRM_Quickbulkemail_Form_QuickBulkEmail extends CRM_Core_Form {
   function updateGroupandRecipients() {
     
     $values = $this->controller->exportValues($this->_name);
-    $groups = array();
-    $ids = array();
-    foreach (array(
-      'name', 'group_id', 'search_id', 'search_args', 'campaign_id', 'dedupe_email') as $n) {
+    $groups = [];
+    $ids = [];
+    foreach ([
+      'name', 'group_id', 'search_id', 'search_args', 'campaign_id', 'dedupe_email'] as $n) {
       if (CRM_Utils_Array::value($n, $values)) {
         $params[$n] = $values[$n];
       }
@@ -680,7 +680,7 @@ class CRM_Quickbulkemail_Form_QuickBulkEmail extends CRM_Core_Form {
       }
     }
 
-    $mailings = array();
+    $mailings = [];
     if (is_array($inMailings)) {
       foreach ($inMailings as $key => $id) {
         if ($id) {
@@ -738,9 +738,9 @@ class CRM_Quickbulkemail_Form_QuickBulkEmail extends CRM_Core_Form {
    */
   function updateTrackingOptions() {
       // Tracking and reply options
-    $params = $ids = array();
-    $uploadParams = array('reply_id', 'unsubscribe_id', 'optout_id', 'resubscribe_id');
-    $uploadParamsBoolean = array('override_verp', 'forward_replies', 'url_tracking', 'open_tracking', 'auto_responder');
+    $params = $ids = [];
+    $uploadParams = ['reply_id', 'unsubscribe_id', 'optout_id', 'resubscribe_id'];
+    $uploadParamsBoolean = ['override_verp', 'forward_replies', 'url_tracking', 'open_tracking', 'auto_responder'];
 
     $qf_Settings_submit = $this->controller->exportValue($this->_name, '_qf_Settings_submit');
 
@@ -778,14 +778,14 @@ class CRM_Quickbulkemail_Form_QuickBulkEmail extends CRM_Core_Form {
   
   function updateTemplateOptions() {
       // Update the templates and upload options
-    $params       = $ids = array();
-    $uploadParams = array('header_id', 'footer_id', 'subject', 'from_name', 'from_email');
-    $fileType     = array('textFile', 'htmlFile');
+    $params       = $ids = [];
+    $uploadParams = ['header_id', 'footer_id', 'subject', 'from_name', 'from_email'];
+    $fileType     = ['textFile', 'htmlFile'];
 
     $formValues = $this->controller->exportValues($this->_name);
     foreach ($uploadParams as $key) {
       if (CRM_Utils_Array::value($key, $formValues) ||
-        in_array($key, array('header_id', 'footer_id'))
+        in_array($key, ['header_id', 'footer_id'])
       ) {
         $params[$key] = $formValues[$key];
         $this->set($key, $formValues[$key]);
@@ -815,10 +815,10 @@ class CRM_Quickbulkemail_Form_QuickBulkEmail extends CRM_Core_Form {
 
     $session = CRM_Core_Session::singleton();
     $params['contact_id'] = $session->get('userID');
-    $composeFields = array(
+    $composeFields = [
       'template', 'saveTemplate',
       'updateTemplate', 'saveTemplateName',
-    );
+    ];
     
     CRM_Core_BAO_File::formatAttachment($formValues,
       $params,

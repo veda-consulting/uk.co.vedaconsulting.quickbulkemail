@@ -16,11 +16,11 @@ class CRM_Quickbulkemail_Page_QuickBulkEmail extends CRM_Core_Page {
       if(empty($cid)){
         return "Null";
       }
-      $params = array(
+      $params = [
         'version' => 3,
         'sequential' => 1,
         'id'  =>  $cid
-      );
+      ];
       $aContact = civicrm_api('Contact', 'get', $params);
       if( $aContact['is_error'] != 1 && $aContact['count']!= 0 ){
        
@@ -44,11 +44,11 @@ class CRM_Quickbulkemail_Page_QuickBulkEmail extends CRM_Core_Page {
       
       #api return count 25 as default.
       #set max count in rowCount as 500
-      $params = array(
+      $params = [
         'version' => 3,
         'sequential' => 1,
         'rowCount' => 500 
-      );
+      ];
       
       /*$sql = "Select count(*) as count From civicrm_mailing";
       $mailingCount = CRM_Core_DAO::singleValueQuery($sql);
@@ -64,11 +64,11 @@ class CRM_Quickbulkemail_Page_QuickBulkEmail extends CRM_Core_Page {
         return;
       }
       foreach ( $aMailings['values'] as $key => $mailing ){
-        $pMailingJob = array(
+        $pMailingJob = [
                   'version' => 3,
                   'sequential' => 1,
                   'mailing_id' => $mailing['id']
-                  );
+                  ];
       $aMailingJob = civicrm_api('MailingJob', 'get', $pMailingJob);
       if( $aMailingJob['is_error'] != 1 && $aMailingJob['count']!= 0 ){
         $status = $aMailingJob['values'][0]['status'];
@@ -114,7 +114,7 @@ class CRM_Quickbulkemail_Page_QuickBulkEmail extends CRM_Core_Page {
       }
       
       $action = "<span><a href='".$actionUrl."'>".$actionName."</a></span>" ;
-      $rows[] = array( 'id'           => $mailing['id']
+      $rows[] = [ 'id'           => $mailing['id']
                       ,'name'         => $mailing['name']
                       ,'status'       => $status
                       ,'created_date' => CRM_Utils_Date::customFormat($mailing['created_date'])
@@ -126,14 +126,14 @@ class CRM_Quickbulkemail_Page_QuickBulkEmail extends CRM_Core_Page {
                       ,'created_id'   => $mailing['created_id']
                       ,'scheduled_id' => $scheduled_id
                       ,'action'       => $action
-                ); 
+                ];
       }
       return $rows;
     }
     function run(){
       #@madav
       #assigning table column headers in array to use both thead and tfoot.
-      $columnHeaders = array( "Mailing Name", "Status", "Created By", "Sent BY", "Scheduled", "Started", "Completed", "Action" );
+      $columnHeaders = [ "Mailing Name", "Status", "Created By", "Sent BY", "Scheduled", "Started", "Completed", "Action" ];
       $this->assign('columnHeaders', $columnHeaders); 
       
       #getting list of mailings.
