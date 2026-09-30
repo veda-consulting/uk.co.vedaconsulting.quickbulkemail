@@ -528,7 +528,7 @@ class CRM_Quickbulkemail_Form_QuickBulkEmail extends CRM_Core_Form {
       $$part = array();
       if ($fields["{$part}_id"]) {
         //echo "found<p>";
-        $component = new CRM_Mailing_BAO_Component();
+        $component = new CRM_Mailing_BAO_MailingComponent();
         $component->id = $fields["{$part}_id"];
         $component->find(TRUE);
         ${$part}['textFile'] = $component->body_text;
